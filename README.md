@@ -1,4 +1,4 @@
-#Fork Change Summary
+# Fork Change Summary
 
 * Resolved several compiler fatal and warning errors.
 * Added commandline options
@@ -10,7 +10,10 @@
 * The original code is over 25 years.
 * I am not going to send in a PR.
 
-
+## Extraneous info
+* I adapted a CGI front-end to an earlier version back in 1996.
+* That version stopped working when I moved off of the SPARC architecture ... a long while ago.
+* I decided to fix it. It lives over in a dusty "Functional Relics" section at https://dungeoneer.com/ which I'm rejuvinating.
 
 -----------------------------------------------
 
