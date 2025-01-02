@@ -1,3 +1,21 @@
+#Fork Change Summary
+
+* Resolved several compiler fatal and warning errors.
+* Added commandline options
+* Re-added stdout
+* Made the commandline input and GIF stdout a compiler option. `gcc -D ARGS_AND_STDOUT -O3 worldgen.c -lm -o gengif`
+
+## Why fork?
+* Code currenly hasn't been touched in 10 years.
+* The original code is over 25 years.
+* I am not going to send in a PR.
+
+
+
+-----------------------------------------------
+
+
+
 Originally from http://donjon.bin.sh/code/ , ©2009-2015 "drow"
 
 Four separate tools: A name generator, a random generator, a fractal world generator and a random dungeon generator.
