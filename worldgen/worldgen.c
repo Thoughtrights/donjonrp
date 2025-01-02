@@ -16,7 +16,12 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* Fractal Worldmap Generator Version 2.2
+/*
+ * New compile option: expect query args and write GIF to standard out.
+ * gcc -D ARGS_AND_STDOUT -O3 worldgen.c -lm -o gengif
+ */
+
+/* Fractal Worldmap Generator Version 2.2c
  *
  * Creator: John Olsson
  * Thanks to Carl Burke for interesting discussions and suggestions of
@@ -158,6 +163,7 @@ void main(int argc, char **argv)
   char SaveName[256];  /* 255 character filenames should be enough? */
   char SaveFile[256];  /* SaveName + .gif */
   FILE * Save;
+
   
   WorldMapArray = (int *) malloc(XRange*YRange*sizeof(int));
   if (WorldMapArray == NULL)
@@ -176,17 +182,68 @@ void main(int argc, char **argv)
     SinIterPhi[i] = SinIterPhi[i+XRange] = (float)sin(i*2*PI/XRange);
   }
 
+  
+#ifdef ARGS_AND_STDOUT
+  if (argv[1])
+    NumberOfFaults=atoi(argv[1]);
+  if (argv[2])
+    PercentWater=atoi(argv[2]);
+  if (argv[3])
+    PercentIce=atoi(argv[3]);
+  if (argv[4]) {
+    srand(atoi(argv[4]));
+  } else {
+    srand(time(0));
+  }
+  if (argv[5]) {
+    XRange = 640;
+    YRange = 320;
+  } else {
+    XRange = 320;
+    YRange = 160;
+  }    
+    
+  if (argc < 3) {
+    fprintf(stdout, "usage:\t%s NumberOfFaults PercentWater PercentIce\n\n",
+	    argv[0]);
+    exit(1);
+  }
+  if ((PercentWater > 100) || (PercentIce > 100) ||
+      (PercentWater < 0) || (PercentIce < 0)) {
+    fprintf(stdout, "warning: PercentWater and PercentIce must be values in 0-100.\n\n");
+    exit(1);
+  }    
+  if ((NumberOfFaults > 5000) || (NumberOfFaults < 100)) {
+    fprintf(stdout, "warning: NumberOfFaults must be values in 100-5000.\n\n");
+    exit(1);
+  }
+#else /*ARGS_AND_STDOUT*/
   fprintf(stderr, "Seed: ");
-  scanf("%d", &Seed);
+  if (scanf("%d", &Seed) != 1) {
+    fprintf(stderr, "Error: Invalid input for Seed.\n");
+    exit(1); 
+  }
   fprintf(stderr, "Number of faults: ");
-  scanf("%d", &NumberOfFaults);
+  if (scanf("%d", &NumberOfFaults) != 1) {
+    fprintf(stderr, "Error: Invalid input for Number of Faults.\n");
+    exit(1); 
+  }
   fprintf(stderr, "Percent water: ");
-  scanf("%d", &PercentWater);
+  if (scanf("%d", &PercentWater) != 1) {
+    fprintf(stderr, "Error: Invalid input for percent water.\n");
+    exit(1); 
+  }
   fprintf(stderr, "Percent ice: ");
-  scanf("%d", &PercentIce);
-
+  if (scanf("%d", &PercentIce) != 1) {
+    fprintf(stderr, "Error: Invalid input for percent ice.\n");
+    exit(1); 
+  }
   fprintf(stderr, "Save as (.GIF will be appended): ");
-  scanf("%8s", SaveName);
+  if (scanf("%8s", SaveName) != 1) {
+    fprintf(stderr, "Error: Invalid input for SaveName.\n");
+    exit(1); 
+  }
+#endif /*ARGS_AND_STDOUT*/
   
   srand(Seed);
 
@@ -353,19 +410,25 @@ NorthPoleFinished:
 Finished:;
   }
   
+#ifdef ARGS_AND_STDOUT
+  /* Write GIF to stdout */
+  GIFEncode(stdout, XRange, YRange, 1, 0, 8, Red, Green, Blue);
+  free(WorldMapArray);
+  exit(0);
+#else /*ARGS_AND_STDOUT*/
   /* append .gif to SaveFile */
-  sprintf(SaveFile, "%s.gif", SaveName);
+  if (snprintf(SaveFile, sizeof(SaveFile), "%s.gif", SaveName) >= sizeof(SaveFile)) {
+    fprintf(stderr, "Error: Filename too long.\n");
+    exit(1); 
+  }
   /* open binary SaveFile */
   Save = fopen(SaveFile, "wb");
-  /* Write GIF to savefile */
-  
-  GIFEncode(Save, XRange, YRange, 1, 0, 8, Red, Green, Blue);
-  
+  /* Write GIF to savefile */  
+  GIFEncode(Save, XRange, YRange, 1, 0, 8, Red, Green, Blue);  
   fprintf(stderr, "Map created, saved as %s.\n", SaveFile);
-  
   free(WorldMapArray);
-
   exit(0);
+#endif /*ARGS_AND_STDOUT*/
 }
 
 void FloodFill4(int x, int y, int OldColor)
