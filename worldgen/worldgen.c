@@ -165,24 +165,7 @@ void main(int argc, char **argv)
   FILE * Save;
 
   
-  WorldMapArray = (int *) malloc(XRange*YRange*sizeof(int));
-  if (WorldMapArray == NULL)
-  {
-    fprintf(stderr, "I can't allocate enough memory!\n");
-  }
 
-  SinIterPhi = (float *) malloc(2*XRange*sizeof(float));
-  if (SinIterPhi == NULL)
-  {
-    fprintf(stderr, "I can't allocate enough memory!\n");
-  }
-  
-  for (i=0; i<XRange; i++)
-  {
-    SinIterPhi[i] = SinIterPhi[i+XRange] = (float)sin(i*2*PI/XRange);
-  }
-
-  
 #ifdef ARGS_AND_STDOUT
   if (argv[1])
     NumberOfFaults=atoi(argv[1]);
@@ -196,8 +179,8 @@ void main(int argc, char **argv)
     srand(time(0));
   }
   if (argv[5]) {
-    XRange = 640;
-    YRange = 320;
+    XRange = 1080;
+    YRange = 540;
   } else {
     XRange = 320;
     YRange = 160;
@@ -244,6 +227,23 @@ void main(int argc, char **argv)
     exit(1); 
   }
 #endif /*ARGS_AND_STDOUT*/
+
+  WorldMapArray = (int *) malloc(XRange*YRange*sizeof(int));
+  if (WorldMapArray == NULL)
+  {
+    fprintf(stderr, "I can't allocate enough memory!\n");
+  }
+
+  SinIterPhi = (float *) malloc(2*XRange*sizeof(float));
+  if (SinIterPhi == NULL)
+  {
+    fprintf(stderr, "I can't allocate enough memory!\n");
+  }
+  
+  for (i=0; i<XRange; i++)
+  {
+    SinIterPhi[i] = SinIterPhi[i+XRange] = (float)sin(i*2*PI/XRange);
+  }
   
   srand(Seed);
 
