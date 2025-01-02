@@ -182,8 +182,8 @@ void main(int argc, char **argv)
     XRange = 1080;
     YRange = 540;
   } else {
-    XRange = 320;
-    YRange = 160;
+    XRange = 640;
+    YRange = 320;
   }    
     
   if (argc < 3) {
